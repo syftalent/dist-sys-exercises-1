@@ -16,47 +16,7 @@ import java.util.*;
 
 
 public class DiscoveryServer {
-	static List<String[]> serverTable = new ArrayList<String[]>();
-	
-	// add new server into the server table
-	public static void add(String obj1, String obj2, String host, int port){
-		String[] newServer1 = {obj1, obj2, host, Integer.toString(port)};
-		String[] newServer2 = {obj2, obj1, host, Integer.toString(port)};
-		serverTable.add(newServer1);
-		serverTable.add(newServer2);
-	}
-	
-	// delete the server from server table	
-	public static void remove(String host, int port){
-		/*int tableSize = serverTable.size();
-		for (int i = 0; i < tableSize; i ++){
-			String[] temp = serverTable.get(i);
-			if(temp[2].equals(host) && temp[3].equals(Integer.toString(port))){
-				serverTable.remove(i);
-			}
-		}*/
-		Iterator<String[]> iter = serverTable.iterator();
-		while(iter.hasNext()){
-		    String[] temp = iter.next();
-		    if(temp[2].equals(host) && temp[3].equals(Integer.toString(port))){
-		        iter.remove();
-		        serverTable.remove(temp);
-		    }
-		}
-	}
-	
-	// look up for certain server
-	public static List<String[]> lookup(String obj1, String obj2) {
-		int tableSize = serverTable.size();
-		List<String[]> result = new ArrayList<String[]>();
-		for (int i = 0; i < tableSize; i ++){
-			String[] temp = serverTable.get(i);
-			if(temp[0].equals(obj1) && temp[1].equals(obj2)){
-				result.add(serverTable.get(i));
-			}
-		}
-		return result;
-	}
+	static ServerContainer sc = new ServerobjServerContainer();
 	
 	// a simple function to check is Integer or not
 	private static boolean isInteger(String str) {    
@@ -84,24 +44,22 @@ public class DiscoveryServer {
         
         String[] tokens = userInput.split(" ");
         if (tokens.length == 5 && tokens[0].equals("ADD") && isInteger(tokens[4])){
-            String obj1 = tokens[1];
-            String obj2 = tokens[2];
-            String host = tokens[3];
+            Server server = new Server(tokens[1], tokens[2], tokens[3], tokens[4]);
             int port = Integer.parseInt(tokens[4]);
-            add(obj1, obj2, host, port);
+            addServer(server);
         }else if (tokens.length == 3 && tokens[0].equals("REMOVE") && isInteger(tokens[2])){
-            remove(tokens[1], Integer.parseInt(tokens[2]));
+            if(removeServer(tokens[1], Integer.parseInt(tokens[2]))){
+                out.println("Sucess.");
+            }else{
+                out.println("Failure.");
+            };
             
         }else if (tokens.length == 3 && tokens[0].equals("LOOKUP")){
-            List<String[]> result = lookup(tokens[1], tokens[2]);
-            if(result.size() == 0){
-            	out.println("NULL");
-            }else{
-            	int listSize = result.size();
-            	for(int i = 0; i < listSize; i ++){
-            		String[] singleResult = result.get(i);
-            		out.println(singleResult[2] + " " + singleResult[3]);
-            	}
+            ConObject obj1 = new ConObject(tokens[1]);
+            ConObject obj2 = new ConObject(tokens[2]);
+            Server server = getOneServer(obj1, obj2);
+            if(server == null){
+                out.println("Not exist.");
             }
         }else{
             out.println("Invalid Input!");
