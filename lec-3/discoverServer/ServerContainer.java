@@ -41,19 +41,24 @@ public class ServerContainer {
 	    }
 	}
 	
-	public void addServer(Server server){
+	public boolean addServer(Server server){
+	    String ipport = server.ip + ":" + server.port;
+	    if(ipportServerContainer.containsKey(ipport)){
+	        return false;
+	    }
+	    
+	 	ipportServerContainer.put(ipport, server);
+
 	  	String obj = server.obj1.name + " " + server.obj2.name;
 	    if(containsServer(server.obj1, server.obj2)){
-	        Set hs = getAllServer(server.obj1,server.obj2);
+	        Set<Server> hs = getAllServer(server.obj1,server.obj2);
 	        hs.add(server);
 	    }else{
 	        Set <Server>hs = new HashSet<Server>();
 	        hs.add(server);
 	        objServerContainer.put(obj,hs);
 	    }
-	    
-	    String ipport = server.ip + ":" + server.port;
-	    ipportServerContainer.put(ipport, server);
+	    return true;
 	}
 	
 	public boolean removeServer(String ip, int port){
