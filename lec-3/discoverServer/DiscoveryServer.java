@@ -12,6 +12,7 @@ import java.util.Map;
 import java.util.HashMap;
 import java.util.regex.Pattern;
 import java.util.*;
+//import discoverServer.ConObject;
 
 
 public class DiscoveryServer {
@@ -68,14 +69,6 @@ public class DiscoveryServer {
         BufferedReader in = new BufferedReader(new InputStreamReader(clientSocket.getInputStream()));
         PrintWriter out = new PrintWriter(clientSocket.getOutputStream(), true);
 
-        /* Write a welcome message to the client */
-        out.println("Welcome to the Discovery Server!");
-        
-        out.println("Protocols:");
-        out.println("To add a server: ADD <Unit1> <Unit2> <hostname> <port>");
-        out.println("To look up a server: LOOKUP <Unit1> <Unit2>");
-        out.println("To remove a server: REMOVE <hostname> <port>");
-
         /* read and print the client's request */
         // readLine() blocks until the server receives a new line from client
         String userInput;
@@ -124,7 +117,9 @@ public class DiscoveryServer {
         //check if argument length is invalid
         if(args.length != 1) {
             System.err.println("Usage: java ConvServer port");
+            System.exit(-1);
         }
+        
         // create socket
         int port = Integer.parseInt(args[0]);
         ServerSocket serverSocket = new ServerSocket(port);
@@ -148,3 +143,4 @@ public class DiscoveryServer {
 	
 
 }
+
