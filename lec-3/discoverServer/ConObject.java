@@ -1,3 +1,4 @@
+import java.util.HashSet;
 import java.util.Set;
 
 public class ConObject{
@@ -6,6 +7,7 @@ public class ConObject{
     
     ConObject(String name){
         this.name = name;
+        connectedObj = new HashSet<ConObject>();
     }
     
     public Set<ConObject> getConnectedObjs(){
