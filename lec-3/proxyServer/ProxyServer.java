@@ -28,15 +28,13 @@ public class ProxyServer {
     //ip address of Servers
     //port num of Servers
     
-    private static ObjServerContainer osContainer;
-
     public static void process (Socket clientSocket) throws IOException {
         // open up IO streams
         BufferedReader in = new BufferedReader(new InputStreamReader(clientSocket.getInputStream()));
         PrintWriter out = new PrintWriter(clientSocket.getOutputStream(), true);
 
         /* Write a welcome message to the client */
-        out.println("Welcome to the Minions like bananas caculator!");
+        out.println("Welcome to the Proxy Server!");
         out.println("Please input as \"<input> <output> <value>\"");
         
         //traverse the osContainer
@@ -148,7 +146,6 @@ public class ProxyServer {
         out.println(input);
         String output;
         if((output = in.readLine()) == null || output.equals("Invalid Input!")){
-            System.out.println("!!!"+output);
             System.err.println("Error reading message");
             out.close();
             in.close();
@@ -161,55 +158,14 @@ public class ProxyServer {
         return output;
     }
     
-    //matain the info about the server
-    private static class Server{
-        String obj1;
-        String obj2;
-        String host;
-        int port;
-        
-        Server(String host, int port,String obj1, String obj2){
-            this.obj1 = obj1;
-            this.obj2 = obj2;
-            this.host = host;
-            this.port = port;
-        }
-    }
+
     
     private static boolean isInteger(String str) {    
         Pattern pattern = Pattern.compile("^[-\\+]?[\\d]*$");    
         return pattern.matcher(str).matches();    
     } 
     
-    private static class ObjServerContainer{
-        Map <String,Map<String,Server>> objServer;
-        
-        ObjServerContainer(){
-            objServer = new HashMap<String,Map<String,Server>>();
-        }
-        
-        public boolean containsObj(String obj){
-            return objServer.containsKey(obj);
-        }
-            
-        public void addServer(String obj1, String obj2, Server server){
-            if(this.containsObj(obj1)){
-            	objServer.get(obj1).put(obj2,server);
-            }else{
-                Map<String,Server> hm = new HashMap<String,Server>();
-                hm.put(obj2,server);
-                objServer.put(obj1,hm);
-            }
-        }
-        
-        public Map<String,Server> getServerMap(String obj){
-            return objServer.get(obj);
-        }
-        
-        public Server getServer(String obj1, String obj2){
-            return getServerMap(obj1).get(obj2);
-        }
-    }
+    
     
     public static void main(String[] args) throws Exception {
 
@@ -219,37 +175,35 @@ public class ProxyServer {
             System.exit(-1);
         }
         
-        osContainer = new ObjServerContainer(); 
-        
-        //read server info from routing table file
-        //add server to ObjServerContainer
-        try{
-            BufferedReader reader = new BufferedReader(new FileReader("routing_table"));
-            String strIn = reader.readLine();
-            while((strIn = reader.readLine()) != null){
-                String[] split = strIn.split(" ");
-                if(split.length != 4){
-                    System.err.println("routing_table row length invalid");
-                    continue;
-                }
-                if(!isInteger(split[1])){
-                    System.err.println("routing_table port not interger");
-                    continue;
-                }
-                String host = split[0];
-                int port = Integer.parseInt(split[1]);
-                String obj1 = split[2];
-                String obj2 = split[3];
+        // //read server info from routing table file
+        // //add server to ObjServerContainer
+        // try{
+        //     BufferedReader reader = new BufferedReader(new FileReader("routing_table"));
+        //     String strIn = reader.readLine();
+        //     while((strIn = reader.readLine()) != null){
+        //         String[] split = strIn.split(" ");
+        //         if(split.length != 4){
+        //             System.err.println("routing_table row length invalid");
+        //             continue;
+        //         }
+        //         if(!isInteger(split[1])){
+        //             System.err.println("routing_table port not interger");
+        //             continue;
+        //         }
+        //         String host = split[0];
+        //         int port = Integer.parseInt(split[1]);
+        //         String obj1 = split[2];
+        //         String obj2 = split[3];
                 
-                Server s = new Server(host,port,obj1,obj2);
-                osContainer.addServer(obj1,obj2,s);
-                osContainer.addServer(obj2,obj1,s);
-            }
-        }catch(FileNotFoundException fnfe){
-            System.err.println(fnfe);
-        }catch(IOException ioe){
-            System.err.println(ioe);
-        }
+        //         Server s = new Server(host,port,obj1,obj2);
+        //         osContainer.addServer(obj1,obj2,s);
+        //         osContainer.addServer(obj2,obj1,s);
+        //     }
+        // }catch(FileNotFoundException fnfe){
+        //     System.err.println(fnfe);
+        // }catch(IOException ioe){
+        //     System.err.println(ioe);
+        // }
 
         // create socket
         int port = Integer.parseInt(args[0]);
