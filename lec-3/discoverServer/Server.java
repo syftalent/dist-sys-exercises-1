@@ -1,13 +1,13 @@
 public class Server {
-	String obj1;
-	String obj2;
-	String host;
+	ConObject obj1;
+	ConObject obj2;
+	String ip;
 	int port;
 
-	Server(String host, int port, String obj1, String obj2) {
+	Server(String ip, int port, ConObject obj1, ConObject obj2) {
 		this.obj1 = obj1;
 		this.obj2 = obj2;
-		this.host = host;
+		this.ip = ip;
 		this.port = port;
 	}
 }

@@ -17,7 +17,7 @@ public class ConObject{
     }
     
     public void addConnectedObj(ConObject obj){
-        if(connectedObj.contains(objName)){
+        if(connectedObj.contains(obj)){
             return;
         }else{
             connectedObj.add(obj);
