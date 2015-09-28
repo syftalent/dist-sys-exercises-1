@@ -26,7 +26,7 @@ public class ServerContainer {
 	        if(iter.hasNext()){
 	        	return iter.next();
 	        }else{
-	        	System.out.println("ERROR! No Server in it");
+	        	System.err.println("ERROR! No Server in it");
 	        }
 	    }
 	    return null;
