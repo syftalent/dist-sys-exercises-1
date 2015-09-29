@@ -16,7 +16,7 @@ import java.util.*;
 
 
 public class DiscoveryServer {
-	static ServerContainer sc = new ServerobjServerContainer();
+	static ServerContainer sc = new ServerContainer();
 	
 	// a simple function to check is Integer or not
 	private static boolean isInteger(String str) {    
@@ -43,23 +43,32 @@ public class DiscoveryServer {
         //--TODO: add your converting functions here, msg = func(userInput);
         
         String[] tokens = userInput.split(" ");
-        if (tokens.length == 5 && tokens[0].equals("ADD") && isInteger(tokens[4])){
-            Server server = new Server(tokens[1], tokens[2], tokens[3], tokens[4]);
+        if (tokens.length == 5 && tokens[0].toUpperCase().equals("ADD") && isInteger(tokens[4])){
+            ConObject unit1 = new ConObject(tokens[1]);
+            ConObject unit2 = new ConObject(tokens[2]);
+            String host = tokens[3];
             int port = Integer.parseInt(tokens[4]);
-            addServer(server);
-        }else if (tokens.length == 3 && tokens[0].equals("REMOVE") && isInteger(tokens[2])){
-            if(removeServer(tokens[1], Integer.parseInt(tokens[2]))){
+            Server server = new Server(host, port, unit1, unit2);
+            if(sc.addServer(server)){
+                out.println("Sucess.");
+            }else{
+                out.println("Failure");
+            };
+        }else if (tokens.length == 3 && tokens[0].toUpperCase().equals("REMOVE") && isInteger(tokens[2])){
+            if(sc.removeServer(tokens[1], Integer.parseInt(tokens[2]))){
                 out.println("Sucess.");
             }else{
                 out.println("Failure.");
             };
             
-        }else if (tokens.length == 3 && tokens[0].equals("LOOKUP")){
+        }else if (tokens.length == 3 && tokens[0].toUpperCase().equals("LOOKUP")){
             ConObject obj1 = new ConObject(tokens[1]);
             ConObject obj2 = new ConObject(tokens[2]);
-            Server server = getOneServer(obj1, obj2);
+            Server server = sc.getOneServer(obj1, obj2);
             if(server == null){
                 out.println("Not exist.");
+            }else{
+                out.println(server.ip + " " + Integer.toString(server.port));
             }
         }else{
             out.println("Invalid Input!");
