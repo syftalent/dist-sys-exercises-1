@@ -62,6 +62,11 @@ public class DiscoveryServer {
                 obj2 = (objMap.containsKey(tokens[2])) ? 
                     objMap.get(tokens[2]):new ConObject(tokens[2]);
                 
+                if(!objMap.containsKey(obj1.name))
+                    objMap.put(obj1.name, obj1);
+                if(!objMap.containsKey(obj2.name))
+                    objMap.put(obj2.name, obj2);
+                    
                 ip = tokens[3];
                 port = Integer.parseInt(tokens[4]);
                 
@@ -74,7 +79,7 @@ public class DiscoveryServer {
                 break;
             case "REMOVE":
                 if(tokens.length != 3){
-                    out.println("Failure: Number of parameter should be five");
+                    out.println("Failure: Number of parameter should be three");
                     break;
                 }
                 if(!isInteger(tokens[2])){
@@ -92,7 +97,7 @@ public class DiscoveryServer {
                 break;
             case "LOOKUP":
                 if(tokens.length != 3){
-                    out.println("Failure: Number of parameter should be five");
+                    out.println("Failure: Number of parameter should be three");
                     break;
                 }
                 if(!objMap.containsKey(tokens[1]) || !objMap.containsKey(tokens[2])){
