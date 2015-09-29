@@ -12,11 +12,11 @@ import java.util.Map;
 import java.util.HashMap;
 import java.util.regex.Pattern;
 import java.util.*;
-//import discoverServer.ConObject;
 
 
 public class DiscoveryServer {
-	static ServerContainer sc = new ServerContainer();
+	private static ServerContainer sc;
+	private static Map<String,ConObject> objMap;
 	
 	// a simple function to check is Integer or not
 	private static boolean isInteger(String str) {    
@@ -43,54 +43,107 @@ public class DiscoveryServer {
         //--TODO: add your converting functions here, msg = func(userInput);
         
         String[] tokens = userInput.split(" ");
-        if (tokens.length == 5 && tokens[0].toUpperCase().equals("ADD") && isInteger(tokens[4])){
-            ConObject unit1 = new ConObject(tokens[1]);
-            ConObject unit2 = new ConObject(tokens[2]);
-            String host = tokens[3];
-            int port = Integer.parseInt(tokens[4]);
-            Server server = new Server(host, port, unit1, unit2);
-            if(sc.addServer(server)){
-                out.println("Sucess.");
-            }else{
-                out.println("Failure");
-            };
-        }else if (tokens.length == 3 && tokens[0].toUpperCase().equals("REMOVE") && isInteger(tokens[2])){
-            if(sc.removeServer(tokens[1], Integer.parseInt(tokens[2]))){
-                out.println("Sucess.");
-            }else{
-                out.println("Failure.");
-            };
-            
-        }else if (tokens.length == 3 && tokens[0].toUpperCase().equals("LOOKUP")){
-            ConObject obj1 = new ConObject(tokens[1]);
-            ConObject obj2 = new ConObject(tokens[2]);
-            Server server = sc.getOneServer(obj1, obj2);
-            if(server == null){
-                out.println("Not exist.");
-            }else{
-                out.println(server.ip + " " + Integer.toString(server.port));
-            }
-        }else{
-            out.println("Invalid Input!");
+        String ip;
+        int port;
+        ConObject obj1,obj2;
+        switch(tokens[0]){
+            case "ADD":
+                if(tokens.length != 5){
+                    out.println("Failure: Number of parameter should be five");
+                    break;
+                }
+                if(!isInteger(tokens[4])){
+                    out.println("Failure: Port num should be interger");
+                    break;
+                }
+                
+                obj1 = (objMap.containsKey(tokens[1])) ? 
+                    objMap.get(tokens[1]):new ConObject(tokens[1]);
+                obj2 = (objMap.containsKey(tokens[2])) ? 
+                    objMap.get(tokens[2]):new ConObject(tokens[2]);
+                
+                ip = tokens[3];
+                port = Integer.parseInt(tokens[4]);
+                
+                Server newServer = new Server(ip, port, obj1, obj2);
+                if(sc.addServer(newServer)){
+                    out.println("Sucess.");
+                }else{
+                    out.println("Failure:Add Server Failed");
+                }
+                break;
+            case "REMOVE":
+                if(tokens.length != 3){
+                    out.println("Failure: Number of parameter should be five");
+                    break;
+                }
+                if(!isInteger(tokens[2])){
+                    out.println("Failure: Port num should be interger");
+                    break;
+                }
+                
+                ip = tokens[1];
+                port = Integer.parseInt(tokens[2]);
+                if(sc.removeServer(ip, port)){
+                    out.println("Sucess.");
+                }else{
+                    out.println("Failure.");
+                }
+                break;
+            case "LOOKUP":
+                if(tokens.length != 3){
+                    out.println("Failure: Number of parameter should be five");
+                    break;
+                }
+                if(!objMap.containsKey(tokens[1]) || !objMap.containsKey(tokens[2])){
+                    out.println("Unit not existed.");
+                    break;
+                }
+                obj1 = objMap.get(tokens[1]);
+                obj2 = objMap.get(tokens[2]);
+                
+                LinkedHashSet<ConObject> path = findConnectRoute(obj1, obj2, new LinkedHashSet<ConObject>());
+                if(path.size() == 0){
+                    out.println("Path not existed.");
+                    break;
+                }
+                
+                Iterator<ConObject> iter = path.iterator();
+                obj1 = null;
+                obj2 = iter.next();
+                while(iter.hasNext()){
+                    obj1 = obj2;
+                    obj2 = iter.next();
+                    Server server = sc.getOneServer(obj1, obj2);
+                    if(server == null){
+                        out.println("Server searching failed");
+                    }else{
+                        out.println(server.ip + " " + Integer.toString(server.port));
+                    }
+                }
+                break;
+            default:
+                out.println("Invalid Input!");
         }
+            
         // close IO streams, then socket
         out.close();
         in.close();
         clientSocket.close();       
     }
 	
-	private static Set<String> findConnectRoute(ConObject obj1, ConObject obj2, LinkedHashSet<ConObject> connectRoute){
+	private static LinkedHashSet<ConObject> findConnectRoute(ConObject obj1, ConObject obj2, LinkedHashSet<ConObject> connectRoute){
         connectRoute.add(obj1);
         if(obj1 == obj2)
             return connectRoute;
         
-        Iterator<String> iter = obj1.iterator(); 
+        Iterator<ConObject> iter = obj1.getConnectedObjs().iterator(); 
         while(iter.hasNext()){
             ConObject nextObj = iter.next();
             if(connectRoute.contains(nextObj))
                 continue;
             else{
-                Set<ConObject> temp = findConnectRoute(nextObj,obj2,connectRoute);
+                LinkedHashSet<ConObject> temp = findConnectRoute(nextObj,obj2,connectRoute);
                 if(temp.contains(obj2))
                     return temp;
             }
@@ -106,6 +159,9 @@ public class DiscoveryServer {
             System.err.println("Usage: java ConvServer port");
             System.exit(-1);
         }
+        
+        sc = new ServerContainer();
+  	    objMap = new HashMap<String,ConObject>();
         
         // create socket
         int port = Integer.parseInt(args[0]);
@@ -130,4 +186,7 @@ public class DiscoveryServer {
 	
 
 }
+
+
+
 

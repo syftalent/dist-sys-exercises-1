@@ -16,6 +16,7 @@ public class ServerContainer {
 	}
 
 	public boolean containsServer(ConObject obj1, ConObject obj2) {
+	    sortByAlphabet(obj1,obj2);
 		return objServerContainer.containsKey(obj1.name + " " + obj2.name);
 	}
 	
@@ -33,6 +34,7 @@ public class ServerContainer {
 	}
 	
 	public Set<Server> getAllServer(ConObject obj1, ConObject obj2){
+	    sortByAlphabet(obj1,obj2);
 	    if(containsServer(obj1,obj2)){
 	        return objServerContainer.get(obj1.name + " " + obj2.name);
 	    }else{
@@ -58,6 +60,8 @@ public class ServerContainer {
 	        hs.add(server);
 	        objServerContainer.put(obj,hs);
 	    }
+	    server.obj1.addConnectedObj(server.obj2);
+        server.obj2.addConnectedObj(server.obj1);
 	    return true;
 	}
 	
@@ -72,10 +76,20 @@ public class ServerContainer {
 	        hs.remove(server);
 	        if(hs.size() == 0){
 	            objServerContainer.remove(obj);
+	            server.obj1.removeConnectedObj(server.obj2);
+	            server.obj2.removeConnectedObj(server.obj1);
 	        }
 	        return true;
 	    }else{
 	        return false;
+	    }
+	}
+	
+	private void sortByAlphabet(ConObject obj1, ConObject obj2){
+	    if(obj1.name.compareTo(obj2.name) > 0){
+	        ConObject temp = obj1;
+	        obj1 = obj2;
+	        obj2 = temp;
 	    }
 	}
 }
