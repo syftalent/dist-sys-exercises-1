@@ -70,6 +70,26 @@ public class DiscoveryServer {
         clientSocket.close();       
     }
 	
+	private static Set<String> findConnectRoute(ConObject obj1, ConObject obj2, LinkedHashSet<ConObject> connectRoute){
+        connectRoute.add(obj1);
+        if(obj1 == obj2)
+            return connectRoute;
+        
+        Iterator<String> iter = obj1.iterator(); 
+        while(iter.hasNext()){
+            ConObject nextObj = iter.next();
+            if(connectRoute.contains(nextObj))
+                continue;
+            else{
+                Set<ConObject> temp = findConnectRoute(nextObj,obj2,connectRoute);
+                if(temp.contains(obj2))
+                    return temp;
+            }
+        }
+        connectRoute.remove(obj1);
+        return connectRoute;
+    }
+	
 	public static void main(String[] args) throws Exception {
 
         //check if argument length is invalid

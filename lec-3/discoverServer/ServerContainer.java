@@ -30,7 +30,6 @@ public class ServerContainer {
 	        }
 	    }
 	    return null;
-	    
 	}
 	
 	public Set<Server> getAllServer(ConObject obj1, ConObject obj2){
@@ -42,6 +41,7 @@ public class ServerContainer {
 	}
 	
 	public boolean addServer(Server server){
+	    sortByAlphabet(server.obj1,server.obj2);
 	    String ipport = server.ip + ":" + server.port;
 	    if(ipportServerContainer.containsKey(ipport)){
 	        return false;
