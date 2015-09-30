@@ -15,8 +15,8 @@ import java.util.*;
 
 
 public class DiscoveryServer {
-	private static ServerContainer sc;
-	private static Map<String,ConObject> objMap;
+	private static ServerContainer mServerContainer;
+	private static Map<String,ConObject> mObjMap;
 	
 	// a simple function to check is Integer or not
 	private static boolean isInteger(String str) {    
@@ -43,11 +43,8 @@ public class DiscoveryServer {
         //--TODO: add your converting functions here, msg = func(userInput);
         
         String[] tokens = userInput.split(" ");
-        String ip;
-        int port;
-        ConObject obj1,obj2;
         switch(tokens[0]){
-            case "ADD":
+            case "ADD":{
                 if(tokens.length != 5){
                     out.println("Failure: Number of parameter should be five");
                     break;
@@ -57,27 +54,28 @@ public class DiscoveryServer {
                     break;
                 }
                 
-                obj1 = (objMap.containsKey(tokens[1])) ? 
-                    objMap.get(tokens[1]):new ConObject(tokens[1]);
-                obj2 = (objMap.containsKey(tokens[2])) ? 
-                    objMap.get(tokens[2]):new ConObject(tokens[2]);
+                ConObject obj1 = (mObjMap.containsKey(tokens[1])) ? 
+                    mObjMap.get(tokens[1]):new ConObject(tokens[1]);
+                ConObject obj2 = (mObjMap.containsKey(tokens[2])) ? 
+                    mObjMap.get(tokens[2]):new ConObject(tokens[2]);
                 
-                if(!objMap.containsKey(obj1.name))
-                    objMap.put(obj1.name, obj1);
-                if(!objMap.containsKey(obj2.name))
-                    objMap.put(obj2.name, obj2);
+                if(!mObjMap.containsKey(obj1.name))
+                    mObjMap.put(obj1.name, obj1);
+                if(!mObjMap.containsKey(obj2.name))
+                    mObjMap.put(obj2.name, obj2);
                     
-                ip = tokens[3];
-                port = Integer.parseInt(tokens[4]);
+                String ip = tokens[3];
+                int port = Integer.parseInt(tokens[4]);
                 
-                Server newServer = new Server(ip, port, obj1, obj2);
-                if(sc.addServer(newServer)){
+                Server server = new Server(ip, port, obj1, obj2);
+                if(mServerContainer.addServer(server)){
                     out.println("Sucess.");
                 }else{
                     out.println("Failure:Add Server Failed");
                 }
                 break;
-            case "REMOVE":
+            }
+            case "REMOVE":{
                 if(tokens.length != 3){
                     out.println("Failure: Number of parameter should be three");
                     break;
@@ -87,25 +85,46 @@ public class DiscoveryServer {
                     break;
                 }
                 
-                ip = tokens[1];
-                port = Integer.parseInt(tokens[2]);
-                if(sc.removeServer(ip, port)){
+                String ip = tokens[1];
+                int port = Integer.parseInt(tokens[2]);
+                if(mServerContainer.removeServer(ip, port)){
                     out.println("Sucess.");
                 }else{
                     out.println("Failure.");
                 }
                 break;
-            case "LOOKUP":
+            }
+            case "LOOKUP":{
                 if(tokens.length != 3){
                     out.println("Failure: Number of parameter should be three");
                     break;
                 }
-                if(!objMap.containsKey(tokens[1]) || !objMap.containsKey(tokens[2])){
+                if(!mObjMap.containsKey(tokens[1]) || !mObjMap.containsKey(tokens[2])){
                     out.println("Unit not existed.");
                     break;
                 }
-                obj1 = objMap.get(tokens[1]);
-                obj2 = objMap.get(tokens[2]);
+                ConObject obj1 = mObjMap.get(tokens[1]);
+                ConObject obj2 = mObjMap.get(tokens[2]);
+                
+                Server server = mServerContainer.getOneServer(obj1,obj2);
+                if(server == null){
+                    out.println("Failure: No available server");
+                }else{
+                    out.println(server.ip + " " + server.port);
+                }
+                break;
+            }
+            case "LOOKUP_MULTI":{
+                if(tokens.length != 3){
+                    out.println("Failure: Number of parameter should be three");
+                    break;
+                }
+                if(!mObjMap.containsKey(tokens[1]) || !mObjMap.containsKey(tokens[2])){
+                    out.println("Unit not existed.");
+                    break;
+                }
+                ConObject obj1 = mObjMap.get(tokens[1]);
+                ConObject obj2 = mObjMap.get(tokens[2]);
                 
                 LinkedHashSet<ConObject> path = findConnectRoute(obj1, obj2, new LinkedHashSet<ConObject>());
                 if(path.size() == 0){
@@ -119,14 +138,16 @@ public class DiscoveryServer {
                 while(iter.hasNext()){
                     obj1 = obj2;
                     obj2 = iter.next();
-                    Server server = sc.getOneServer(obj1, obj2);
+                    Server server = mServerContainer.getOneServer(obj1, obj2);
                     if(server == null){
                         out.println("Server searching failed");
                     }else{
-                        out.println(server.ip + " " + Integer.toString(server.port));
+                        out.println(obj1.name + " " + obj2.name + " " 
+                            + server.ip + " " + server.port + " " + iter.hasNext());
                     }
                 }
                 break;
+            }
             default:
                 out.println("Invalid Input!");
         }
@@ -165,8 +186,8 @@ public class DiscoveryServer {
             System.exit(-1);
         }
         
-        sc = new ServerContainer();
-  	    objMap = new HashMap<String,ConObject>();
+        mServerContainer = new ServerContainer();
+  	    mObjMap = new HashMap<String,ConObject>();
         
         // create socket
         int port = Integer.parseInt(args[0]);
@@ -191,7 +212,3 @@ public class DiscoveryServer {
 	
 
 }
-
-
-
-

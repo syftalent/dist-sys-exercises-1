@@ -21,6 +21,7 @@ public class ServerContainer {
 	}
 	
 	public Server getOneServer(ConObject obj1, ConObject obj2){
+	    sortByAlphabet(obj1,obj2);
 	    if(containsServer(obj1,obj2)){
 	        Set <Server> hs = objServerContainer.get(obj1.name + " " + obj2.name);
 	        Iterator <Server> iter = hs.iterator();
