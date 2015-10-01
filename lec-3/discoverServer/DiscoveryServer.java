@@ -43,7 +43,7 @@ public class DiscoveryServer {
         //--TODO: add your converting functions here, msg = func(userInput);
         
         String[] tokens = userInput.split(" ");
-        switch(tokens[0].toUpperCase()){
+        switch(tokens[0]){
             // Add a new server
             case "ADD":{
                 if(tokens.length != 5){
