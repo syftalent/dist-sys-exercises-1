@@ -14,7 +14,9 @@ public class ServerContainer {
 		objServerContainer = new HashMap<String, Set<Server>>();
 		ipportServerContainer = new HashMap<String, Server>();
 	}
-
+	
+	
+    // check if there are servers in server table that have this conversion
 	public boolean containsServer(ConObject obj1, ConObject obj2) {
 	    if(obj1.name.compareTo(obj2.name) > 0){
 	        ConObject temp = obj1;
@@ -24,6 +26,7 @@ public class ServerContainer {
 		return objServerContainer.containsKey(obj1.name + " " + obj2.name);
 	}
 	
+	// get only one server from server table based on two units
 	public Server getOneServer(ConObject obj1, ConObject obj2){
 	    if(obj1.name.compareTo(obj2.name) > 0){
 	        ConObject temp = obj1;
@@ -44,6 +47,7 @@ public class ServerContainer {
 	    return null;
 	}
 	
+	// return all the server in a list who can convers between these two units
 	public Set<Server> getAllServer(ConObject obj1, ConObject obj2){
 	    if(obj1.name.compareTo(obj2.name) > 0){
 	        ConObject temp = obj1;
@@ -57,6 +61,9 @@ public class ServerContainer {
 	    }
 	}
 	
+	/* function to add the server 
+	if this server already in the server table, return false;
+	if successfully added, return true */
 	public boolean addServer(Server server){
 	    if(server.obj1.name.compareTo(server.obj2.name) > 0){
 	        ConObject temp = server.obj1;
@@ -85,6 +92,9 @@ public class ServerContainer {
 	    return true;
 	}
 	
+	/*function to remove a server from server table
+	if there is no matching server in the server table, return false
+	if successfully removed, return true*/
 	public boolean removeServer(String ip, int port){
 	    Server server;
 	    String ipport = ip + ":" + port;
