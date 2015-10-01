@@ -61,9 +61,7 @@ public class ProxyServer {
         //Check the input and call other servers
         if(tokens.length != 3){
             out.println("The number of parameter is incorrect");
-        }else if(!osContainer.containsObj(tokens[0]) || !osContainer.containsObj(tokens[1])){
-            out.println("There's unknown parameter");
-        }else if(!isInteger(tokens[2])){
+        }else if(!isDouble(tokens[2])){
             out.println("The third parameter is not interger");
         }else{
             String obj1 = tokens[0];
@@ -72,8 +70,7 @@ public class ProxyServer {
         
             Set<String> connectRoute = findConnectRoute(obj1,obj2,new LinkedHashSet<String>());
             if(connectRoute.size() == 0){
-                out.println("The convertion is not available, because " +
-                    obj1 + " and" + obj2 + " are not connected.");
+                out.println("The convertion is not available");
             }else if(connectRoute.size() < 2){
                 System.err.println("Find Route Err");
             }else{
@@ -108,26 +105,6 @@ public class ProxyServer {
         clientSocket.close();
     }
     
-    private static Set<String> findConnectRoute(String obj1, String obj2, Set<String> connectRoute){
-        connectRoute.add(obj1);
-        if(obj1.equals(obj2))
-            return connectRoute;
-        Map<String,Server> hm = osContainer.getServerMap(obj1);
-        Iterator<String> iter = hm.keySet().iterator(); 
-        while(iter.hasNext()){
-            String nextObj = iter.next();
-            if(connectRoute.contains(nextObj))
-                continue;
-            else{
-                Set<String> temp = findConnectRoute(nextObj,obj2,connectRoute);
-                if(temp.contains(obj2))
-                    return temp;
-            }
-        }
-        connectRoute.remove(obj1);
-        return connectRoute;
-    }
-    
     
     //function using to connect the remote server
     public static String connectServer(String host, int port, String input) throws IOException{
@@ -158,14 +135,16 @@ public class ProxyServer {
         return output;
     }
     
-
-    
-    private static boolean isInteger(String str) {    
-        Pattern pattern = Pattern.compile("^[-\\+]?[\\d]*$");    
-        return pattern.matcher(str).matches();    
-    } 
-    
-    
+    // a simple function to check is Double or not
+	//if not return null,if is return double
+	private static boolean isDouble(String str) {    
+        try{
+            Double.parseDouble(str);
+        }catch(NumberFormatException e){
+            return false;
+        }
+        return true;
+    }
     
     public static void main(String[] args) throws Exception {
 
@@ -175,6 +154,29 @@ public class ProxyServer {
             System.exit(-1);
         }
         
+
+
+        // create socket
+        int port = Integer.parseInt(args[0]);
+        ServerSocket serverSocket = new ServerSocket(port);
+        System.err.println("Started server on port " + port);
+
+        // wait for connections, and process
+        try {
+            while(true) {
+                // a "blocking" call which waits until a connection is requested
+                Socket clientSocket = serverSocket.accept();
+                System.err.println("\nAccepted connection from client");
+                process(clientSocket);
+            }
+
+        }catch (IOException e) {
+            System.err.println("Connection Error");
+        }
+        System.exit(0);
+    }
+}
+
         // //read server info from routing table file
         // //add server to ObjServerContainer
         // try{
@@ -204,24 +206,3 @@ public class ProxyServer {
         // }catch(IOException ioe){
         //     System.err.println(ioe);
         // }
-
-        // create socket
-        int port = Integer.parseInt(args[0]);
-        ServerSocket serverSocket = new ServerSocket(port);
-        System.err.println("Started server on port " + port);
-
-        // wait for connections, and process
-        try {
-            while(true) {
-                // a "blocking" call which waits until a connection is requested
-                Socket clientSocket = serverSocket.accept();
-                System.err.println("\nAccepted connection from client");
-                process(clientSocket);
-            }
-
-        }catch (IOException e) {
-            System.err.println("Connection Error");
-        }
-        System.exit(0);
-    }
-}

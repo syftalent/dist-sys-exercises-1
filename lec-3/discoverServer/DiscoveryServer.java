@@ -19,7 +19,7 @@ public class DiscoveryServer {
 	private static Map<String,ConObject> mObjMap;
 	
 	// a simple function to check is Integer or not
-	private static boolean isInteger(String str) {    
+	private static boolean isDouble(String str) {    
         Pattern pattern = Pattern.compile("^[-\\+]?[\\d]*$");    
         return pattern.matcher(str).matches();    
     }
