@@ -16,13 +16,23 @@ public class ServerContainer {
 	}
 
 	public boolean containsServer(ConObject obj1, ConObject obj2) {
-	    sortByAlphabet(obj1,obj2);
+	    if(obj1.name.compareTo(obj2.name) > 0){
+	        ConObject temp = obj1;
+	        obj1 = obj2;
+	        obj2 = temp;
+	    }
 		return objServerContainer.containsKey(obj1.name + " " + obj2.name);
 	}
 	
 	public Server getOneServer(ConObject obj1, ConObject obj2){
-	    sortByAlphabet(obj1,obj2);
+	    if(obj1.name.compareTo(obj2.name) > 0){
+	        ConObject temp = obj1;
+	        obj1 = obj2;
+	        obj2 = temp;
+	    }
+	    System.out.println("get "+obj1.name + " " + obj2.name);
 	    if(containsServer(obj1,obj2)){
+	        System.out.println("Contains obj12");
 	        Set <Server> hs = objServerContainer.get(obj1.name + " " + obj2.name);
 	        Iterator <Server> iter = hs.iterator();
 	        if(iter.hasNext()){
@@ -35,7 +45,11 @@ public class ServerContainer {
 	}
 	
 	public Set<Server> getAllServer(ConObject obj1, ConObject obj2){
-	    sortByAlphabet(obj1,obj2);
+	    if(obj1.name.compareTo(obj2.name) > 0){
+	        ConObject temp = obj1;
+	        obj1 = obj2;
+	        obj2 = temp;
+	    }
 	    if(containsServer(obj1,obj2)){
 	        return objServerContainer.get(obj1.name + " " + obj2.name);
 	    }else{
@@ -44,7 +58,12 @@ public class ServerContainer {
 	}
 	
 	public boolean addServer(Server server){
-	    sortByAlphabet(server.obj1,server.obj2);
+	    if(server.obj1.name.compareTo(server.obj2.name) > 0){
+	        ConObject temp = server.obj1;
+	        server.obj1 = server.obj2;
+	        server.obj2 = temp;
+	    }
+	    System.out.println("add "+server.obj1.name + " " + server.obj2.name);
 	    String ipport = server.ip + ":" + server.port;
 	    if(ipportServerContainer.containsKey(ipport)){
 	        return false;
@@ -83,14 +102,6 @@ public class ServerContainer {
 	        return true;
 	    }else{
 	        return false;
-	    }
-	}
-	
-	private void sortByAlphabet(ConObject obj1, ConObject obj2){
-	    if(obj1.name.compareTo(obj2.name) > 0){
-	        ConObject temp = obj1;
-	        obj1 = obj2;
-	        obj2 = temp;
 	    }
 	}
 }
