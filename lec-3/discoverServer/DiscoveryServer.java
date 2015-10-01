@@ -44,6 +44,7 @@ public class DiscoveryServer {
         
         String[] tokens = userInput.split(" ");
         switch(tokens[0].toUpperCase()){
+            // Add a new server
             case "ADD":{
                 if(tokens.length != 5){
                     out.println("Failure: Number of parameter should be five");
@@ -75,6 +76,7 @@ public class DiscoveryServer {
                 }
                 break;
             }
+            // remove server from server table
             case "REMOVE":{
                 if(tokens.length != 3){
                     out.println("Failure: Number of parameter should be three");
@@ -94,6 +96,7 @@ public class DiscoveryServer {
                 }
                 break;
             }
+            // look up server from server table
             case "LOOKUP":{
                 if(tokens.length != 3){
                     out.println("Failure: Number of parameter should be three");
@@ -114,6 +117,7 @@ public class DiscoveryServer {
                 }
                 break;
             }
+            // look up all the server which match the requirement of the client
             case "LOOKUP_MULTI":{
                 if(tokens.length != 3){
                     out.println("Failure: Number of parameter should be three");
