@@ -43,7 +43,7 @@ public class DiscoveryServer {
         //--TODO: add your converting functions here, msg = func(userInput);
         
         String[] tokens = userInput.split(" ");
-        switch(tokens[0]){
+        switch(tokens[0].toUpperCase()){
             case "ADD":{
                 if(tokens.length != 5){
                     out.println("Failure: Number of parameter should be five");
