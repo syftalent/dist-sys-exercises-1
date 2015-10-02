@@ -34,13 +34,16 @@ public class DiscoveryServer {
         String userInput;
         if ((userInput = in.readLine()) == null) {
             System.out.println("Error reading message");
+            out.println("Error reading message");
             out.close();
             in.close();
             clientSocket.close();
+            return;
         }
 
         System.out.println("Received message: " + userInput);
         //--TODO: add your converting functions here, msg = func(userInput);
+        
         
         String[] tokens = userInput.split(" ");
         switch(tokens[0]){
@@ -205,7 +208,6 @@ public class DiscoveryServer {
                 Socket clientSocket = serverSocket.accept();
                 System.err.println("\nAccepted connection from client");
                 process(clientSocket);
-                
             }
 
         }catch (IOException e) {
