@@ -33,8 +33,8 @@ public class DiscoveryServer {
         // readLine() blocks until the server receives a new line from client
         String userInput;
         if ((userInput = in.readLine()) == null) {
-            System.out.println("Error reading message");
-            out.println("Error reading message");
+            System.out.println(Constants.getErrInfoString("ERR004"));
+            out.println("ERR004");
             out.close();
             in.close();
             clientSocket.close();
@@ -50,11 +50,13 @@ public class DiscoveryServer {
             // Add a new server
             case "ADD":{
                 if(tokens.length != 5){
-                    out.println("Failure: Number of parameter should be five");
+                    out.println("ERR001");
+                    System.out.println(Constants.getErrInfoString("ERR001") + "*ADD");
                     break;
                 }
                 if(!isInteger(tokens[4])){
-                    out.println("Failure: Port num should be interger");
+                    out.println("ERR006");
+                    System.out.println(Constants.getErrInfoString("ERR006") + "*ADD");
                     break;
                 }
                 
@@ -73,40 +75,48 @@ public class DiscoveryServer {
                 
                 Server server = new Server(ip, port, obj1, obj2);
                 if(mServerContainer.addServer(server)){
-                    out.println("Sucess.");
+                    out.println("SUC");
+                    System.out.println(Constants.getErrInfoString("SUC") + "*ADD");
                 }else{
-                    out.println("Failure:Add Server Failed");
+                    out.println("ERR007");
+                    System.out.println(Constants.getErrInfoString("ERR007") + "*ADD");
                 }
                 break;
             }
             // remove server from server table
             case "REMOVE":{
                 if(tokens.length != 3){
-                    out.println("Failure: Number of parameter should be three");
+                    out.println("ERR001");
+                    System.out.println(Constants.getErrInfoString("ERR001") + "*REMOVE");
                     break;
                 }
                 if(!isInteger(tokens[2])){
-                    out.println("Failure: Port num should be interger");
+                    out.println("ERR010");
+                    System.out.println(Constants.getErrInfoString("ERR010") + "*REMOVE");
                     break;
                 }
                 
                 String ip = tokens[1];
                 int port = Integer.parseInt(tokens[2]);
                 if(mServerContainer.removeServer(ip, port)){
-                    out.println("Sucess.");
+                    out.println("SUC");
+                    System.out.println(Constants.getErrInfoString("SUC") + "*REMOVE");
                 }else{
-                    out.println("Failure.");
+                    out.println("ERR011");
+                    System.out.println(Constants.getErrInfoString("ERR011") + "*REMOVE");
                 }
                 break;
             }
             // look up server from server table
             case "LOOKUP":{
                 if(tokens.length != 3){
-                    out.println("Failure: Number of parameter should be three");
+                    out.println("ERR001");
+                    System.out.println(Constants.getErrInfoString("ERR001") + "*LOOKUP");
                     break;
                 }
                 if(!mObjMap.containsKey(tokens[1]) || !mObjMap.containsKey(tokens[2])){
-                    out.println("Unit not existed.");
+                    out.println("ERR008");
+                    System.out.println(Constants.getErrInfoString("ERR008") + "*LOOKUP");
                     break;
                 }
                 ConObject obj1 = mObjMap.get(tokens[1]);
@@ -114,7 +124,8 @@ public class DiscoveryServer {
                 
                 Server server = mServerContainer.getOneServer(obj1,obj2);
                 if(server == null){
-                    out.println("Failure: No available server");
+                    out.println("ERR009");
+                    System.out.println(Constants.getErrInfoString("ERR009") + "*LOOKUP");
                 }else{
                     out.println(server.ip + " " + server.port);
                 }
@@ -123,11 +134,13 @@ public class DiscoveryServer {
             // look up all the server which match the requirement of the client
             case "LOOKUP_MULTI":{
                 if(tokens.length != 3){
-                    out.println("Failure: Number of parameter should be three");
+                    out.println("ERR001");
+                    System.out.println(Constants.getErrInfoString("ERR001") + "*LOOKUP_MULTI");
                     break;
                 }
                 if(!mObjMap.containsKey(tokens[1]) || !mObjMap.containsKey(tokens[2])){
-                    out.println("Unit not existed.");
+                    out.println("ERR008");
+                    System.out.println(Constants.getErrInfoString("ERR008") + "*LOOKUP_MULTI");
                     break;
                 }
                 ConObject obj1 = mObjMap.get(tokens[1]);
@@ -135,7 +148,8 @@ public class DiscoveryServer {
                 
                 LinkedHashSet<ConObject> path = findConnectRoute(obj1, obj2, new LinkedHashSet<ConObject>());
                 if(path.size() == 0){
-                    out.println("Path not existed.");
+                    out.println("ERR012");
+                    System.out.println(Constants.getErrInfoString("ERR012") + "*LOOKUP_MULTI");
                     break;
                 }
                 
@@ -147,7 +161,8 @@ public class DiscoveryServer {
                     obj2 = iter.next();
                     Server server = mServerContainer.getOneServer(obj1, obj2);
                     if(server == null){
-                        out.println("Server searching failed");
+                        out.println("ERR009");
+                        System.out.println(Constants.getErrInfoString("ERR009") + "*LOOKUP_MULTI");
                     }else{
                         out.println(obj1.name + " " + obj2.name + " " 
                             + server.ip + " " + server.port + " " + iter.hasNext());
@@ -156,7 +171,8 @@ public class DiscoveryServer {
                 break;
             }
             default:
-                out.println("Invalid Input!");
+                out.println("ERR013");
+                System.out.println(Constants.getErrInfoString("ERR013"));
         }
             
         // close IO streams, then socket
