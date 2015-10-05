@@ -43,10 +43,14 @@ public class Conv_$_b {
         //--TODO: add your converting functions here, msg = func(userInput);
         
         String[] tokens = userInput.split(" ");
-        if(tokens.length != 3)
-            out.println("ERR004");
-        else if(!isDouble(tokens[2]))
-            out.println("ERR005");
+        if(tokens.length != 3){
+            out.println("ERR001");
+            System.out.println(Constants.getErrInfoString("ERR001"));
+        }
+        else if(!isDouble(tokens[2])){
+            out.println("ERR002");
+            System.out.println(Constants.getErrInfoString("ERR002"));
+        }
         else{
             double result;
             double num = Double.parseDouble(tokens[2]);
@@ -57,7 +61,8 @@ public class Conv_$_b {
                 result = num / 2;
                 out.println(result);
             }else{
-                out.println("ERR006");
+                out.println("ERR003");
+                System.out.println(Constants.getErrInfoString("ERR003"));
             }
         }
 
