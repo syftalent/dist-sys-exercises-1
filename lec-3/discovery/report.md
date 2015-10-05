@@ -1,6 +1,6 @@
 Team members:  
 Programmer :Yifei Shen, Huida Tao   
-Protocol Disginer: Yu Ma, Luyao Ma  
+Protocol Disginer: Yu Ma, Luyao Ma, pradeep  
 
 Breif summary:  
 Our discovery server support such commands: ADD, REMOVE, LOOKUP, LOOKUP_MULTI  
