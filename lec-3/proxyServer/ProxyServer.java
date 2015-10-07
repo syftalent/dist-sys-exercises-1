@@ -64,11 +64,9 @@ public class ProxyServer {
         }else if(!isDouble(tokens[2])){
             out.println("The third parameter is not interger");
         }else{
-            String obj1 = tokens[0];
-            String obj2 = tokens[1];
-            String val = tokens[2];
+            
         
-            Set<String> connectRoute = findConnectRoute(obj1,obj2,new LinkedHashSet<String>());
+            /*Set<String> connectRoute = findConnectRoute(obj1,obj2,new LinkedHashSet<String>());
             if(connectRoute.size() == 0){
                 out.println("The convertion is not available");
             }else if(connectRoute.size() < 2){
@@ -96,13 +94,52 @@ public class ProxyServer {
                     val = temp[0];
                 }
                 out.println(output);
-            }
+            }*/
         }
         
         // close IO streams, then socket
         out.close();
         in.close();
         clientSocket.close();
+    }
+    
+    // function to connect the discovery server and get back the result as a Server object
+    public static Server lookupServer(String[] tokens) throws IOException{
+    	 String obj1 = tokens[0];
+         String obj2 = tokens[1];
+         Server result;
+         
+         Socket discoverySocket;
+         try{
+         	discoverySocket = new Socket(discoveryHost, discoveryPort);
+         }catch(IOException e){
+         	System.err.println("Failed to find discovery server!");
+         	return null;
+         }
+         
+         PrintWriter dout = new PrintWriter(discoverySocket.getOutputStream(),true);
+         BufferedReader din = new BufferedReader(new InputStreamReader(discoverySocket.getInputStream()));
+         
+         dout.println("lookup" + " " + tokens[0] + " " + tokens[1]);
+         String output;
+         switch (output = din.readLine()){
+         	case "ERR001" :{
+         		System.out.println(Constants.getErrInfoString("ERR001"));
+         	}
+         	case "ERR008" :{
+         		System.out.println(Constants.getErrInfoString("Err008"));
+         	}
+         	case "ERR009" :{
+         		System.out.println(Constants.getErrInfoString("ERR009"));
+         	}
+         	default :{
+         	
+         	}
+         }
+         String[] answer = output.split(" ");
+         result = new Server(answer[0], Integer.parseInt(answer[1]), new ConObject(obj1), new ConObject(obj2));
+         return result;
+         
     }
     
     
