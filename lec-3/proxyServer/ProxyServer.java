@@ -27,6 +27,8 @@ public class ProxyServer {
     //unit this program may resolve
     //ip address of Servers
     //port num of Servers
+    private static String discoveryHost = "huidatao.koding.io";
+    private static int discoveryPort = 1111;
     
     public static void process (Socket clientSocket) throws IOException {
         // open up IO streams
@@ -37,11 +39,6 @@ public class ProxyServer {
         out.println("Welcome to the Proxy Server!");
         out.println("Please input as \"<input> <output> <value>\"");
         
-        //traverse the osContainer
-        Iterator<String> objIter = osContainer.objServer.keySet().iterator();
-        while(objIter.hasNext()){
-        	out.println("Available Unit: " + objIter.next());
-        }
         
         /* read and print the client's request */
         // readLine() blocks until the server receives a new line from client
@@ -64,37 +61,10 @@ public class ProxyServer {
         }else if(!isDouble(tokens[2])){
             out.println("The third parameter is not interger");
         }else{
-            
-        
-            /*Set<String> connectRoute = findConnectRoute(obj1,obj2,new LinkedHashSet<String>());
-            if(connectRoute.size() == 0){
-                out.println("The convertion is not available");
-            }else if(connectRoute.size() < 2){
-                System.err.println("Find Route Err");
-            }else{
-                Iterator<String> test = connectRoute.iterator();
-                while(test.hasNext())
-                    System.out.println(test.next());
-                
-                Iterator<String> routeIter = connectRoute.iterator();
-                obj2 = routeIter.next();
-                String output = null;
-                while(routeIter.hasNext()){
-                    obj1 = obj2;
-                    obj2 = routeIter.next();
-                    String input = obj1 + " " + obj2 + " " + val;
-                    Server s = osContainer.getServer(obj1,obj2);
-                    output = connectServer(s.host, s.port, input);
-                    System.out.println(output);
-                    if(output == null){
-                        out.println("Connection Failed");
-                        break;
-                    }
-                    String[] temp = output.split(" ");
-                    val = temp[0];
-                }
-                out.println(output);
-            }*/
+             Server server = lookupServer(tokens);
+             String input = tokens[0] + " " + tokens[1] + " " + tokens[2];
+             String result = server.connectServer(server.ip, server.port, input);
+             out.println(result);
         }
         
         // close IO streams, then socket
@@ -120,7 +90,7 @@ public class ProxyServer {
          PrintWriter dout = new PrintWriter(discoverySocket.getOutputStream(),true);
          BufferedReader din = new BufferedReader(new InputStreamReader(discoverySocket.getInputStream()));
          
-         dout.println("lookup" + " " + tokens[0] + " " + tokens[1]);
+         dout.println("LOOKUP" + " " + tokens[0] + " " + tokens[1]);
          String output;
          switch (output = din.readLine()){
          	case "ERR001" :{
@@ -138,38 +108,9 @@ public class ProxyServer {
          }
          String[] answer = output.split(" ");
          result = new Server(answer[0], Integer.parseInt(answer[1]), new ConObject(obj1), new ConObject(obj2));
+         //System.out.println(result.ip + result.port);
          return result;
          
-    }
-    
-    
-    //function using to connect the remote server
-    public static String connectServer(String host, int port, String input) throws IOException{
-        Socket socket;
-        
-        try{
-            socket = new Socket(host, port);
-        }catch(IOException e){
-            System.err.println("Conection Failed!");
-            return null;
-        }
-        
-        PrintWriter out = new PrintWriter(socket.getOutputStream(),true);
-        BufferedReader in = new BufferedReader(new InputStreamReader(socket.getInputStream()));
-        
-        out.println(input);
-        String output;
-        if((output = in.readLine()) == null || output.equals("Invalid Input!")){
-            System.err.println("Error reading message");
-            out.close();
-            in.close();
-            socket.close();
-            return null;
-        }
-        out.close();
-        in.close();
-        socket.close();
-        return output;
     }
     
     // a simple function to check is Double or not
@@ -213,33 +154,3 @@ public class ProxyServer {
         System.exit(0);
     }
 }
-
-        // //read server info from routing table file
-        // //add server to ObjServerContainer
-        // try{
-        //     BufferedReader reader = new BufferedReader(new FileReader("routing_table"));
-        //     String strIn = reader.readLine();
-        //     while((strIn = reader.readLine()) != null){
-        //         String[] split = strIn.split(" ");
-        //         if(split.length != 4){
-        //             System.err.println("routing_table row length invalid");
-        //             continue;
-        //         }
-        //         if(!isInteger(split[1])){
-        //             System.err.println("routing_table port not interger");
-        //             continue;
-        //         }
-        //         String host = split[0];
-        //         int port = Integer.parseInt(split[1]);
-        //         String obj1 = split[2];
-        //         String obj2 = split[3];
-                
-        //         Server s = new Server(host,port,obj1,obj2);
-        //         osContainer.addServer(obj1,obj2,s);
-        //         osContainer.addServer(obj2,obj1,s);
-        //     }
-        // }catch(FileNotFoundException fnfe){
-        //     System.err.println(fnfe);
-        // }catch(IOException ioe){
-        //     System.err.println(ioe);
-        // }
