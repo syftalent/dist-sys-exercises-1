@@ -4,6 +4,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.*;
 
 
 public class ServerContainer {
@@ -83,7 +84,7 @@ public class ServerContainer {
 	        Set<Server> hs = getAllServer(server.obj1,server.obj2);
 	        hs.add(server);
 	    }else{
-	        Set <Server>hs = new HashSet<Server>();
+	        Set <Server>hs = new LinkedHashSet<Server>();
 	        hs.add(server);
 	        objServerContainer.put(obj,hs);
 	    }
