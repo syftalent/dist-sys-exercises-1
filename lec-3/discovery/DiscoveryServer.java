@@ -129,6 +129,12 @@ public class DiscoveryServer {
                 }else{
                     out.println(server.ip + " " + server.port);
                 }
+                
+                // put the used server at the back of the server set
+                if(mServerContainer.removeServer(server.ip, server.port)){
+                    mServerContainer.addServer(server);
+                }
+                
                 break;
             }
             // look up all the server which match the requirement of the client
