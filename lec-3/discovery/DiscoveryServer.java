@@ -40,7 +40,7 @@ public class DiscoveryServer {
                 try{
                     checkServer(server);
                 }catch(IOException e){
-                    System.out.println("Delete server" + server.ip + ":"+server.port);
+                    
                 }
             }
         }
@@ -234,6 +234,7 @@ public class DiscoveryServer {
             checkSocket.close();
         }catch(IOException e){
             mServerContainer.removeServer(server.ip, server.port);
+            System.out.println("Delete off-line server: " + server.ip + ":"+server.port);
         }
         
     }
