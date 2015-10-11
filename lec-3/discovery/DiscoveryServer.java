@@ -28,6 +28,22 @@ public class DiscoveryServer {
         // open up IO streams
         BufferedReader in = new BufferedReader(new InputStreamReader(clientSocket.getInputStream()));
         PrintWriter out = new PrintWriter(clientSocket.getOutputStream(), true);
+        
+        //check if all servers are online
+        Iterator<Map.Entry<String, Set<Server>>> serverEntries = mServerContainer.getServerTable().entrySet().iterator();
+        while(serverEntries.hasNext()){
+            Map.Entry<String, Set<Server>> entry = serverEntries.next();
+            Set<Server> hs = entry.getValue();
+            Iterator<Server> iter = hs.iterator();
+            while(iter.hasNext()){
+                Server server = iter.next();
+                try{
+                    checkServer(server);
+                }catch(IOException e){
+                    System.out.println("Delete server" + server.ip + ":"+server.port);
+                }
+            }
+        }
 
         /* read and print the client's request */
         // readLine() blocks until the server receives a new line from client
@@ -128,12 +144,13 @@ public class DiscoveryServer {
                     System.out.println(Constants.getErrInfoString("ERR009") + "*LOOKUP");
                 }else{
                     out.println(server.ip + " " + server.port);
+                    // put the used server at the back of the server set
+                    if(mServerContainer.removeServer(server.ip, server.port)){
+                        mServerContainer.addServer(server);
+                    }
                 }
                 
-                // put the used server at the back of the server set
-                if(mServerContainer.removeServer(server.ip, server.port)){
-                    mServerContainer.addServer(server);
-                }
+                
                 
                 break;
             }
@@ -205,6 +222,20 @@ public class DiscoveryServer {
         }
         connectRoute.remove(obj1);
         return connectRoute;
+    }
+    
+    // check if server is online, if not, delete it from server table
+    private static void checkServer(Server server) throws IOException {
+        Socket checkSocket = null;
+        try{
+            checkSocket = new Socket(server.ip, server.port);
+            PrintWriter out = new PrintWriter(checkSocket.getOutputStream(),true);
+            out.println("check check 0");
+            checkSocket.close();
+        }catch(IOException e){
+            mServerContainer.removeServer(server.ip, server.port);
+        }
+        
     }
 	
 	public static void main(String[] args) throws Exception {
