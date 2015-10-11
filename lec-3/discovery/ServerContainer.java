@@ -16,6 +16,11 @@ public class ServerContainer {
 		ipportServerContainer = new HashMap<String, Server>();
 	}
 	
+	//get all the Server table
+	public Map<String, Set<Server>> getServerTable(){
+	    Map<String, Set<Server>> temp = objServerContainer;
+	    return temp;
+	}
 	
     // check if there are servers in server table that have this conversion
 	public boolean containsServer(ConObject obj1, ConObject obj2) {
