@@ -17,8 +17,8 @@ import java.io.InputStreamReader;
 import java.util.regex.Pattern;
 
 public class Conv_b_lbs {
-    final static String discoverIp = "52.23.200.76";
-    final static int discoverPort = 1234;
+    final static String discoverIp = "52.89.49.207";
+    final static int discoverPort = 1111;
     
     private static void process (Socket clientSocket) throws IOException {
         // open up IO streams
@@ -55,6 +55,8 @@ public class Conv_b_lbs {
             }else if (tokens[0].equals("lbs") && tokens[1].equals("b")){
                 result = num *3;
                 out.println(result + " bananas");
+            }else if (tokens[0].equals("check") && tokens[1].equals("check")){
+                
             }else{
                 out.println("Invalid Input!");
             }
@@ -83,7 +85,7 @@ public class Conv_b_lbs {
         System.err.println("Started server on port " + port);
     
         //create socket to discovery server
-        Socket discoverSocket;
+        Socket discoverSocket = null;
         try{
             discoverSocket = new Socket(discoverIp, discoverPort);
         }catch(IOException e){
@@ -93,7 +95,7 @@ public class Conv_b_lbs {
         
         //Register to discovery Server
         PrintWriter out = new PrintWriter(discoverSocket.getOutputStream(),true);
-        out.println("set this server");
+        out.println("ADD b lbs " + "huidatao.koding.io " + port);
         discoverSocket.close();
         
         // wait for connections, and process
