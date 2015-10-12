@@ -18,8 +18,8 @@ import java.io.InputStreamReader;
 import java.util.regex.Pattern;
 
 public class Conv_$_b {
-    final static String discoverIp = "52.89.49.207";
-    final static int discoverPort = 1111;
+    final static String discoverIp = "52.91.204.226";
+    final static int discoverPort = 2222;
 
     private static void process (Socket clientSocket) throws IOException {
         // open up IO streams
@@ -110,12 +110,13 @@ public class Conv_$_b {
 
         //create socket to discovery server
         Socket discoverSocket = null;
-        try{
-            discoverSocket = new Socket(discoverIp, discoverPort);
-        }catch(IOException e){
-            System.err.println("Could not connect to discovery server.");
-            System.exit(-1);
-        }
+        // try{
+        //     discoverSocket = new Socket(discoverIp, discoverPort);
+        //     System.out.println("Connected with discover server");
+        // }catch(IOException e){
+        //     System.err.println("Could not connect to discovery server.");
+        //     System.exit(-1);
+        // }
         
         System.out.println(discoverSocket.getLocalSocketAddress());
         PrintWriter out = new PrintWriter(discoverSocket.getOutputStream(),true);
