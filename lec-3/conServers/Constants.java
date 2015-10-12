@@ -35,7 +35,7 @@ public final class Constants{
             
             //****************SUCCESS***************
             case "SUC":
-                return "Success."
+                return "Success.";
             default:
                 return null;
         }
