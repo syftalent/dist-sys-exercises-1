@@ -53,7 +53,7 @@ public class DiscoveryServer {
          for (int i = 0; i < deletelist.size(); i++){
              Server temp = deletelist.get(i);
              if(mServerContainer.removeServer(temp.ip, temp.port)){
-                 System.out.println("Delete off-line server: " + temp.ip + ":"+temp.port);
+                 System.out.println("Delete off-line sesyftalent@hotmail.comrver: " + temp.ip + ":"+temp.port);
              }
          }
         
@@ -101,7 +101,8 @@ public class DiscoveryServer {
                 if(!mObjMap.containsKey(obj2.name))
                     mObjMap.put(obj2.name, obj2);
                     
-                String ip = tokens[3];
+                String remoteAddress = clientSocket.getRemoteSocketAddress().toString();
+                String ip = remoteAddress.substring(1,remoteAddress.indexOf(":"));
                 int port = Integer.parseInt(tokens[4]);
                 
                 Server server = new Server(ip, port, obj1, obj2);
