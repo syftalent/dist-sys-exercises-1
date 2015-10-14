@@ -1,4 +1,4 @@
-public final class Constants{
+public final class Constants implements java.io.Serializable{
     private Constants() {}
     
     public static String getErrInfoString(String errCode){

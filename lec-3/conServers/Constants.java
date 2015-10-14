@@ -1,7 +1,7 @@
 public final class Constants{
     private Constants() {}
     
-    public static String getInfoString(String errCode){
+    public static String getErrInfoString(String errCode){
         switch(errCode){
             //Shared by all servers
             case "ERR001":
@@ -35,7 +35,7 @@ public final class Constants{
             
             //****************SUCCESS***************
             case "SUC":
-                return "Success."
+                return "Success.";
             default:
                 return null;
         }

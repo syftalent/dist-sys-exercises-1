@@ -7,9 +7,9 @@ import java.util.Set;
 import java.util.*;
 
 
-public class ServerContainer {
+public class ServerContainer implements java.io.Serializable{
 	private Map<String, Set<Server>> objServerContainer;
-	private Map<String, Server> ipportServerContainer;
+	public Map<String, Server> ipportServerContainer;
 
 	ServerContainer() {
 		objServerContainer = new HashMap<String, Set<Server>>();
