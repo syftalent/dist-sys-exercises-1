@@ -27,7 +27,7 @@ public class ProxyServer {
     //unit this program may resolve
     //ip address of Servers
     //port num of Servers
-    private static String discoveryHost = "huidatao.koding.io";
+    private static String discoveryHost = "52.89.49.207";
     private static int discoveryPort = 1111;
     
     public static void process (Socket clientSocket) throws IOException {
@@ -63,8 +63,12 @@ public class ProxyServer {
         }else{
              Server server = lookupServer(tokens);
              String input = tokens[0] + " " + tokens[1] + " " + tokens[2];
-             String result = server.connectServer(server.ip, server.port, input);
-             out.println(result);
+             if(server != null){
+                String result = server.connectServer(server.ip, server.port, input);
+                out.println(result);
+             }else{
+                 out.println("This conversion do not exist");
+             }
         }
         
         // close IO streams, then socket
@@ -77,7 +81,7 @@ public class ProxyServer {
     public static Server lookupServer(String[] tokens) throws IOException{
     	 String obj1 = tokens[0];
          String obj2 = tokens[1];
-         Server result;
+         Server result = null;
          
          Socket discoverySocket;
          try{
@@ -90,24 +94,28 @@ public class ProxyServer {
          PrintWriter dout = new PrintWriter(discoverySocket.getOutputStream(),true);
          BufferedReader din = new BufferedReader(new InputStreamReader(discoverySocket.getInputStream()));
          
-         dout.println("LOOKUP" + " " + tokens[0] + " " + tokens[1]);
+         dout.println("LOOKUP" + " " + obj1 + " " + obj2);
          String output;
          switch (output = din.readLine()){
          	case "ERR001" :{
          		System.out.println(Constants.getErrInfoString("ERR001"));
+         		break;
          	}
          	case "ERR008" :{
-         		System.out.println(Constants.getErrInfoString("Err008"));
+         		System.out.println(Constants.getErrInfoString("ERR008"));
+         		break;
          	}
          	case "ERR009" :{
          		System.out.println(Constants.getErrInfoString("ERR009"));
+         		break;
          	}
          	default :{
-         	
+                System.out.println(output);
+                String[] answer = output.split(" ");
+                result = new Server(answer[0], Integer.parseInt(answer[1]), new ConObject(obj1), new ConObject(obj2));
          	}
          }
-         String[] answer = output.split(" ");
-         result = new Server(answer[0], Integer.parseInt(answer[1]), new ConObject(obj1), new ConObject(obj2));
+         
          //System.out.println(result.ip + result.port);
          return result;
          
