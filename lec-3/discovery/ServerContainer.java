@@ -1,10 +1,10 @@
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileReader;
+import java.io.IOException;
 import java.util.*;
+import java.util.regex.Pattern;
 
 
 public class ServerContainer implements java.io.Serializable{
@@ -54,7 +54,7 @@ public class ServerContainer implements java.io.Serializable{
 	}
 	
 	// return all the server in a list who can convers between these two units
-	public Set<Server> getAllServer(ConObject obj1, ConObject obj2){
+	public Set<Server> getAllServerByUnits(ConObject obj1, ConObject obj2){
 	    if(obj1.name.compareTo(obj2.name) > 0){
 	        ConObject temp = obj1;
 	        obj1 = obj2;
@@ -65,6 +65,10 @@ public class ServerContainer implements java.io.Serializable{
 	    }else{
 	        return null;
 	    }
+	}
+	
+	public Iterator<Map.Entry<String, Set<Server>>> getAllServers(){
+	    return objServerContainer.entrySet().iterator();
 	}
 	
 	/* function to add the server 
@@ -86,7 +90,7 @@ public class ServerContainer implements java.io.Serializable{
 
 	  	String obj = server.obj1.name + " " + server.obj2.name;
 	    if(containsServer(server.obj1, server.obj2)){
-	        Set<Server> hs = getAllServer(server.obj1,server.obj2);
+	        Set<Server> hs = getAllServerByUnits(server.obj1,server.obj2);
 	        hs.add(server);
 	    }else{
 	        Set <Server>hs = new LinkedHashSet<Server>();
