@@ -10,6 +10,10 @@ public final class Constants{
                 return "The converted value is not int or double.";
             case "ERR003":
                 return "Conversion units are not recognized.";
+            case "ERR008":
+                return "Failure: Unit not existed.";
+            case "ERR009":
+                return "Failure: Server not found.";
             default:
                 return null;
         }
