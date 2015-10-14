@@ -20,6 +20,8 @@ import java.util.regex.Pattern;
 public class Conv_$_b {
     final static String discoverIp = "52.89.49.207";
     final static int discoverPort = 1111;
+    final static String unit1 = "$";
+    final static String unit2 = "b";
 
     private static void process (Socket clientSocket) throws IOException {
         // open up IO streams
@@ -45,24 +47,24 @@ public class Conv_$_b {
         String[] tokens = userInput.split(" ");
         if(tokens.length != 3){
             out.println("ERR001");
-            System.out.println(Constants.getErrInfoString("ERR001"));
+            System.out.println(Constants.getInfoString("ERR001"));
         }
         else if(!isDouble(tokens[2])){
             out.println("ERR002");
-            System.out.println(Constants.getErrInfoString("ERR002"));
+            System.out.println(Constants.getInfoString("ERR002"));
         }
         else{
             double result;
             double num = Double.parseDouble(tokens[2]);
-            if (tokens[0].equals("$") && tokens[1].equals("b")){
+            if (tokens[0].equals(unit1) && tokens[1].equals(unit2)){
                 result = num * 2;
                 out.println(result);
-            }else if (tokens[0].equals("b") && tokens[1].equals("$")){
+            }else if (tokens[0].equals(unit2) && tokens[1].equals(unit1)){
                 result = num / 2;
                 out.println(result);
             }else{
                 out.println("ERR003");
-                System.out.println(Constants.getErrInfoString("ERR003"));
+                System.out.println(Constants.getInfoString("ERR003"));
             }
         }
 
@@ -112,13 +114,16 @@ public class Conv_$_b {
         Socket discoverSocket = null;
         try{
             discoverSocket = new Socket(discoverIp, discoverPort);
+            System.out.println("Connected with discovery server");
+            PrintWriter discoverOut = new PrintWriter(discoverSocket.getOutputStream(),true);
+            BufferedReader discoverIn = new BufferedReader(new InputStreamReader(discoverSocket.getInputStream()));
+            discoverOut.println("ADD " + unit1 + " " + unit2 + " huidatao.koding.io " + args[0]);
+            System.out.println(discoverIn.readLine());
+            discoverSocket.close();
         }catch(IOException e){
             System.err.println("Could not connect to discovery server.");
             System.exit(-1);
         }
-        
-        System.out.println(discoverSocket.getLocalSocketAddress());
-        PrintWriter out = new PrintWriter(discoverSocket.getOutputStream(),true);
         
         //out.println("set this server");
         discoverSocket.close();
@@ -139,6 +144,7 @@ public class Conv_$_b {
         System.exit(0);
     }
 }
+
 
 
 
